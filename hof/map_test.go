@@ -1,8 +1,7 @@
 package hof
 
 import (
-	"fmt"
-	"github.com/libreoscar/evm/utils"
+	"github.com/facebookgo/ensure"
 	"testing"
 )
 
@@ -14,11 +13,11 @@ var tMap = map[string]int{
 }
 
 func TestKeys(t *testing.T) {
-	keys := utils.Keys(tMap).([]string)
-	fmt.Println(keys)
+	keys := Keys(tMap).([]string)
+	ensure.SameElements(t, keys, []string{"btcchina", "rex", "a", "b"})
 }
 
 func TestValues(t *testing.T) {
-	vals := utils.Values(tMap).([]int)
-	fmt.Println(vals)
+	vals := Values(tMap).([]int)
+	ensure.SameElements(t, vals, []int{97, 99, 90, 100})
 }
