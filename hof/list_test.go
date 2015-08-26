@@ -12,6 +12,24 @@ func TestMap(t *testing.T) {
 	ensure.DeepEqual(t, ys, []int{2, 4, 6, 8, -2, 0})
 }
 
+func BenchmarkMapBaseline(b *testing.B) {
+	xs := make([]int, 100)
+	for i := 0; i < b.N; i++ {
+		ys := make([]int, 0, len(xs))
+		for k := 0; k < len(xs); k++ {
+			ys = append(ys, xs[k]*2)
+		}
+		_ = ys
+	}
+}
+
+func BenchmarkMap(b *testing.B) {
+	xs := make([]int, 100)
+	for i := 0; i < b.N; i++ {
+		_ = Map(xs, func(n int) int { return n * 2 }).([]int)
+	}
+}
+
 func TestFilter(t *testing.T) {
 	xs := []int{2, 4, 5, 1, 2, 6, 4}
 	ys := Filter(xs, func(n int) bool {

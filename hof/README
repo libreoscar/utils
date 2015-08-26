@@ -1,1 +1,3 @@
 hof stands for "higher order functions"
+
+DO NOT use these functions when performance is critical, because they are usually 20-100 times slower than a non-generic version.
