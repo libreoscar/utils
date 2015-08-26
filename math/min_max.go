@@ -56,7 +56,7 @@ func UInt64Max(a, b uint64) uint64 {
 
 //-------------------------- int64 ----------------------------------------------------------------
 
-func SInt64Min(a, b int64) int64 {
+func Int64Min(a, b int64) int64 {
 	if a <= b {
 		return a
 	} else {
@@ -64,7 +64,7 @@ func SInt64Min(a, b int64) int64 {
 	}
 }
 
-func SInt64Max(a, b int64) int64 {
+func Int64Max(a, b int64) int64 {
 	if a >= b {
 		return a
 	} else {
@@ -92,7 +92,7 @@ func UInt32Max(a, b uint32) uint32 {
 
 //-------------------------- int32 ----------------------------------------------------------------
 
-func SInt32Min(a, b int32) int32 {
+func Int32Min(a, b int32) int32 {
 	if a <= b {
 		return a
 	} else {
@@ -100,7 +100,7 @@ func SInt32Min(a, b int32) int32 {
 	}
 }
 
-func SInt32Max(a, b int32) int32 {
+func Int32Max(a, b int32) int32 {
 	if a >= b {
 		return a
 	} else {

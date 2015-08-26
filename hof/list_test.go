@@ -1,7 +1,8 @@
-package hof
+package hof_test
 
 import (
 	"github.com/facebookgo/ensure"
+	. "github.com/libreoscar/utils/hof"
 	"testing"
 )
 
