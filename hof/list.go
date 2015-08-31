@@ -49,7 +49,6 @@ func Foldl(xs, init, f interface{}) interface{} {
 	vb.Set(vinit)
 
 	for i := 0; i < xsLen; i++ {
-		// TODO (Rex): make sure order is right
 		vb.Set(vf.Call([]reflect.Value{vb, vxs.Index(i)})[0])
 	}
 	return vb.Interface()
