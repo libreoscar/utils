@@ -4,6 +4,54 @@ import (
 	"sort"
 )
 
+//------------------------------------ byte -------------------------------------------------------
+
+type byteSlice []byte
+
+func (p byteSlice) Len() int           { return len(p) }
+func (p byteSlice) Less(i, j int) bool { return p[i] < p[j] }
+func (p byteSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
+
+func Bytes(a []byte, reverse bool) {
+	if reverse {
+		sort.Sort(sort.Reverse(byteSlice(a)))
+	} else {
+		sort.Sort(byteSlice(a))
+	}
+}
+
+//------------------------------------ int8 -------------------------------------------------------
+
+type int8Slice []int8
+
+func (p int8Slice) Len() int           { return len(p) }
+func (p int8Slice) Less(i, j int) bool { return p[i] < p[j] }
+func (p int8Slice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
+
+func Int8s(a []int8, reverse bool) {
+	if reverse {
+		sort.Sort(sort.Reverse(int8Slice(a)))
+	} else {
+		sort.Sort(int8Slice(a))
+	}
+}
+
+//------------------------------------ uint8 ------------------------------------------------------
+
+type uint8Slice []uint8
+
+func (p uint8Slice) Len() int           { return len(p) }
+func (p uint8Slice) Less(i, j int) bool { return p[i] < p[j] }
+func (p uint8Slice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
+
+func UInt8s(a []uint8, reverse bool) {
+	if reverse {
+		sort.Sort(sort.Reverse(uint8Slice(a)))
+	} else {
+		sort.Sort(uint8Slice(a))
+	}
+}
+
 //------------------------------------ int --------------------------------------------------------
 
 func Ints(a []int, reverse bool) {
@@ -97,13 +145,24 @@ func UInt64s(a []uint64, reverse bool) {
 	}
 }
 
-//------------------------------------ string -----------------------------------------------------
+//------------------------------------ float32 ----------------------------------------------------
 
-func Strings(a []string, reverse bool) {
+type float32Slice []float32
+
+func (p float32Slice) Len() int           { return len(p) }
+func (p float32Slice) Less(i, j int) bool { return p[i] < p[j] || isNaN(p[i]) && !isNaN(p[j]) }
+func (p float32Slice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
+
+// isNaN is a copy of math.IsNaN to avoid a dependency on the math package.
+func isNaN(f float32) bool {
+	return f != f
+}
+
+func Float32s(a []float32, reverse bool) {
 	if reverse {
-		sort.Sort(sort.Reverse(sort.StringSlice(a)))
+		sort.Sort(sort.Reverse(float32Slice(a)))
 	} else {
-		sort.Strings(a)
+		sort.Sort(float32Slice(a))
 	}
 }
 
@@ -114,5 +173,15 @@ func Float64s(a []float64, reverse bool) {
 		sort.Sort(sort.Reverse(sort.Float64Slice(a)))
 	} else {
 		sort.Float64s(a)
+	}
+}
+
+//------------------------------------ string -----------------------------------------------------
+
+func Strings(a []string, reverse bool) {
+	if reverse {
+		sort.Sort(sort.Reverse(sort.StringSlice(a)))
+	} else {
+		sort.Strings(a)
 	}
 }

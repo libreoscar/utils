@@ -9,6 +9,24 @@ func ByteSlice(data []byte) (ret []byte) {
 	return
 }
 
+func Int8Slice(data []int8) (ret []int8) {
+	if data == nil {
+		return
+	}
+	ret = make([]int8, len(data))
+	copy(ret, data)
+	return
+}
+
+func UInt8Slice(data []uint8) (ret []uint8) {
+	if data == nil {
+		return
+	}
+	ret = make([]uint8, len(data))
+	copy(ret, data)
+	return
+}
+
 func IntSlice(data []int) (ret []int) {
 	if data == nil {
 		return
@@ -59,6 +77,24 @@ func UInt64Slice(data []uint64) (ret []uint64) {
 		return
 	}
 	ret = make([]uint64, len(data))
+	copy(ret, data)
+	return
+}
+
+func Float32Slice(data []float32) (ret []float32) {
+	if data == nil {
+		return
+	}
+	ret = make([]float32, len(data))
+	copy(ret, data)
+	return
+}
+
+func Float64Slice(data []float64) (ret []float64) {
+	if data == nil {
+		return
+	}
+	ret = make([]float64, len(data))
 	copy(ret, data)
 	return
 }
