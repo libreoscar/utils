@@ -49,7 +49,7 @@ func Foldl(xs, init, f interface{}) interface{} {
 	vb.Set(vinit)
 
 	for i := 0; i < xsLen; i++ {
-		vb.Set(vf.Call([]reflect.Value{vb, vxs.Index(i)})[0])
+		vb.Set(vf.Call([]reflect.Value{vxs.Index(i), vb})[0])
 	}
 	return vb.Interface()
 }
