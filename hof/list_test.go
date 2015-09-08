@@ -46,7 +46,7 @@ func TestFoldl(t *testing.T) {
 	}
 	{
 		xs := []int{1, 2, 3}
-		rst := Foldl(xs, 10, func(rst, cur int) int { return rst - cur }).(int)
+		rst := Foldl(xs, 10, func(ele, cur int) int { return cur - ele }).(int)
 		ensure.DeepEqual(t, rst, 4)
 	}
 }
