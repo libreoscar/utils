@@ -2,32 +2,69 @@ package event
 
 import (
 	"reflect"
-	"sync"
 )
 
 type Event struct {
-	sync.Mutex
-	handlers []reflect.Value
+	handlers     []reflect.Value
+	blockingChan chan struct{}
 }
 
-func (s *Event) Subscribe(h interface{}) {
-	s.Lock()
-	defer s.Unlock()
-
-	s.handlers = append(s.handlers, reflect.ValueOf(h))
+func NewEvent() *Event {
+	return &Event{
+		blockingChan: make(chan struct{}, 1),
+	}
 }
 
-func (s *Event) Emit(params ...interface{}) {
-	s.Lock()
-	defer s.Unlock()
+func (e *Event) Subscribe(h interface{}) {
+	e.blockingChan <- struct{}{}
+	defer func() {
+		<-e.blockingChan
+	}()
 
-	if len(s.handlers) > 0 {
+	e.handlers = append(e.handlers, reflect.ValueOf(h))
+}
+
+func (e *Event) Emit(params ...interface{}) {
+	e.blockingChan <- struct{}{}
+	defer func() {
+		<-e.blockingChan
+	}()
+
+	if len(e.handlers) > 0 {
 		var callArgv []reflect.Value
 		for _, p := range params {
 			callArgv = append(callArgv, reflect.ValueOf(p))
 		}
-		for _, h := range s.handlers {
+		for _, h := range e.handlers {
 			h.Call(callArgv)
 		}
 	}
+}
+
+func (e *Event) EmitAsync(params ...interface{}) {
+	select {
+	case e.blockingChan <- struct{}{}:
+		go func() {
+			if len(e.handlers) > 0 {
+				var callArgv []reflect.Value
+				for _, p := range params {
+					callArgv = append(callArgv, reflect.ValueOf(p))
+				}
+				for _, h := range e.handlers {
+					h.Call(callArgv)
+				}
+			}
+			<-e.blockingChan
+		}()
+	default:
+		return
+	}
+}
+
+// wait for all handlers to finish
+func (e *Event) Wait() {
+	e.blockingChan <- struct{}{}
+	defer func() {
+		<-e.blockingChan
+	}()
 }

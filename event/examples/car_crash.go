@@ -8,13 +8,16 @@ import (
 
 type Car struct {
 	//-------------------------- events ----------------------------
-	Crashed event.Event
+	Crashed *event.Event
 
 	nPassengers int
 }
 
 func NewCar(nPassengers int) *Car {
-	return &Car{nPassengers: nPassengers}
+	return &Car{
+		Crashed:     event.NewEvent(),
+		nPassengers: nPassengers,
+	}
 }
 
 func (car *Car) DrunkDriving() {
