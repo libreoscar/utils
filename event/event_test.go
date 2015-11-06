@@ -3,7 +3,6 @@ package event
 import (
 	"github.com/facebookgo/ensure"
 	"testing"
-	"time"
 )
 
 func TestEvent(t *testing.T) {
@@ -12,10 +11,6 @@ func TestEvent(t *testing.T) {
 	e := NewEvent()
 	e.Subscribe(func() {
 		counter = counter + 1
-		time.Sleep(10 * time.Millisecond)
-	})
-	e.Subscribe(func() {
-		counter = counter + 2
 	})
 
 	e.Emit()
@@ -26,5 +21,5 @@ func TestEvent(t *testing.T) {
 	e.Wait()
 	e.EmitAsync()
 	e.Wait()
-	ensure.DeepEqual(t, counter, 15)
+	ensure.DeepEqual(t, counter, 6)
 }

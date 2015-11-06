@@ -42,23 +42,21 @@ func (e *Event) Emit(params ...interface{}) {
 }
 
 func (e *Event) EmitAsync(params ...interface{}) {
-	select {
-	case e.blockingChan <- struct{}{}:
-		go func() {
-			if len(e.handlers) > 0 {
-				var callArgv []reflect.Value
-				for _, p := range params {
-					callArgv = append(callArgv, reflect.ValueOf(p))
-				}
-				for _, h := range e.handlers {
-					h.Call(callArgv)
-				}
-			}
+	e.blockingChan <- struct{}{}
+	go func() {
+		defer func() {
 			<-e.blockingChan
 		}()
-	default:
-		return
-	}
+		if len(e.handlers) > 0 {
+			var callArgv []reflect.Value
+			for _, p := range params {
+				callArgv = append(callArgv, reflect.ValueOf(p))
+			}
+			for _, h := range e.handlers {
+				h.Call(callArgv)
+			}
+		}
+	}()
 }
 
 // wait for all handlers to finish
