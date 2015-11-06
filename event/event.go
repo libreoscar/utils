@@ -5,13 +5,15 @@ import (
 )
 
 type Event struct {
-	handlers     []reflect.Value
-	blockingChan chan struct{}
+	handlers      []reflect.Value
+	blockingChan  chan struct{}
+	asyncExecChan chan struct{}
 }
 
 func NewEvent() *Event {
 	return &Event{
-		blockingChan: make(chan struct{}, 1),
+		blockingChan:  make(chan struct{}, 1),
+		asyncExecChan: make(chan struct{}),
 	}
 }
 
@@ -43,20 +45,27 @@ func (e *Event) Emit(params ...interface{}) {
 
 func (e *Event) EmitAsync(params ...interface{}) {
 	e.blockingChan <- struct{}{}
+
 	go func() {
-		defer func() {
-			<-e.blockingChan
-		}()
-		if len(e.handlers) > 0 {
-			var callArgv []reflect.Value
-			for _, p := range params {
-				callArgv = append(callArgv, reflect.ValueOf(p))
-			}
-			for _, h := range e.handlers {
-				h.Call(callArgv)
-			}
+		for i := 0; i < len(e.handlers); i += 1 {
+			<-e.asyncExecChan
 		}
+		<-e.blockingChan
 	}()
+
+	if len(e.handlers) > 0 {
+		var callArgv []reflect.Value
+		for _, p := range params {
+			callArgv = append(callArgv, reflect.ValueOf(p))
+		}
+		for _, h := range e.handlers {
+			h := h
+			go func() {
+				h.Call(callArgv)
+				e.asyncExecChan <- struct{}{}
+			}()
+		}
+	}
 }
 
 // wait for all handlers to finish
