@@ -43,35 +43,35 @@ func (e *Event) Emit(params ...interface{}) {
 	}
 }
 
-func (e *Event) EmitAsync(params ...interface{}) {
-	e.blockingChan <- struct{}{}
+// func (e *Event) EmitAsync(params ...interface{}) {
+// 	e.blockingChan <- struct{}{}
 
-	go func() {
-		for i := 0; i < len(e.handlers); i += 1 {
-			<-e.asyncExecChan
-		}
-		<-e.blockingChan
-	}()
+// 	go func() {
+// 		for i := 0; i < len(e.handlers); i += 1 {
+// 			<-e.asyncExecChan
+// 		}
+// 		<-e.blockingChan
+// 	}()
 
-	if len(e.handlers) > 0 {
-		var callArgv []reflect.Value
-		for _, p := range params {
-			callArgv = append(callArgv, reflect.ValueOf(p))
-		}
-		for _, h := range e.handlers {
-			h := h
-			go func() {
-				h.Call(callArgv)
-				e.asyncExecChan <- struct{}{}
-			}()
-		}
-	}
-}
+// 	if len(e.handlers) > 0 {
+// 		var callArgv []reflect.Value
+// 		for _, p := range params {
+// 			callArgv = append(callArgv, reflect.ValueOf(p))
+// 		}
+// 		for _, h := range e.handlers {
+// 			h := h
+// 			go func() {
+// 				h.Call(callArgv)
+// 				e.asyncExecChan <- struct{}{}
+// 			}()
+// 		}
+// 	}
+// }
 
-// wait for all handlers to finish
-func (e *Event) Wait() {
-	e.blockingChan <- struct{}{}
-	defer func() {
-		<-e.blockingChan
-	}()
-}
+// // wait for all handlers to finish
+// func (e *Event) Wait() {
+// 	e.blockingChan <- struct{}{}
+// 	defer func() {
+// 		<-e.blockingChan
+// 	}()
+// }
