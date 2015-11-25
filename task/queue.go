@@ -15,6 +15,10 @@ func (d *Queue) ExecAll() {
 	d.tasks = nil
 }
 
+func (d *Queue) Clear() {
+	d.tasks = nil
+}
+
 func (d *Queue) Size() int {
 	return len(d.tasks)
 }

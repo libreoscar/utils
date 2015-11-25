@@ -20,4 +20,8 @@ func TestQueue(t *testing.T) {
 	taskQueue.Add(func() { n += 3 })
 	taskQueue.ExecAll()
 	ensure.DeepEqual(t, n, 5)
+
+	taskQueue.Add(func() { n = 0 })
+	taskQueue.Clear()
+	ensure.DeepEqual(t, n, 5)
 }
