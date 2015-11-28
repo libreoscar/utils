@@ -16,8 +16,7 @@ const (
 
 func New(lvl LogLevel) log15.Logger {
 	logger := log15.New()
-	logger.SetHandler(log15.CallerFileHandler(log15.StdoutHandler))
-	logger.SetHandler(log15.LvlFilterHandler(log15.Lvl(lvl), log15.StdoutHandler))
-
+	handler := log15.LvlFilterHandler(log15.Lvl(lvl), log15.CallerFileHandler(log15.StdoutHandler))
+	logger.SetHandler(handler)
 	return logger
 }
