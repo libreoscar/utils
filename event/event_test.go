@@ -14,12 +14,6 @@ func TestEvent(t *testing.T) {
 	})
 
 	e.Emit()
-	// e.EmitAsync()
-	// e.EmitAsync()
 	e.Emit()
-	// e.EmitAsync()
-	// e.Wait()
-	// e.EmitAsync()
-	// e.Wait()
 	ensure.DeepEqual(t, counter, 2)
 }

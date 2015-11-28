@@ -1,5 +1,6 @@
 package task
 
+// Note: non thread-safe
 type Queue struct {
 	tasks []Task
 }
