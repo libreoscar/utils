@@ -24,6 +24,12 @@ func NewEvent() *Event {
 	}
 }
 
+func (e *Event) Size() int {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	return len(e.handlers)
+}
+
 func (e *Event) Subscribe(h interface{}) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
@@ -35,13 +41,28 @@ func (e *Event) Emit(params ...interface{}) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
 
+	toRemove := make(map[int]bool)
 	if len(e.handlers) > 0 {
 		var callArgv []reflect.Value
 		for _, p := range params {
 			callArgv = append(callArgv, reflect.ValueOf(p))
 		}
-		for _, h := range e.handlers {
-			h.Call(callArgv)
+		for idx, h := range e.handlers {
+			rst := h.Call(callArgv)
+			// if rst is true, the handler will be removed
+			if len(rst) == 1 && rst[0].Kind() == reflect.Bool && rst[0].Bool() {
+				toRemove[idx] = true
+			}
 		}
+	}
+
+	if len(toRemove) > 0 {
+		var afterRemove []reflect.Value = nil
+		for idx, h := range e.handlers {
+			if !toRemove[idx] {
+				afterRemove = append(afterRemove, h)
+			}
+		}
+		e.handlers = afterRemove
 	}
 }

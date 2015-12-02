@@ -17,3 +17,19 @@ func TestEvent(t *testing.T) {
 	e.Emit()
 	ensure.DeepEqual(t, counter, 2)
 }
+
+func TestRemove(t *testing.T) {
+	counter := 0
+	e := NewEvent()
+	e.Subscribe(func() {
+		counter += 2
+	})
+	e.Subscribe(func() bool {
+		counter += 1
+		return true
+	})
+
+	e.Emit()
+	e.Emit()
+	ensure.DeepEqual(t, counter, 5)
+}
