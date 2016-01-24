@@ -5,12 +5,19 @@ import (
 	"sync"
 )
 
-// Best Practice:
-// 1) Declare the event as a public member, e.g. FooEvent, in a class;
-// 2) Emit the event in the class by self.FooEvent.Emit(...)
-// 3) Subscribe the event outside the class by obj.FooEvent.Subscribe(callback)
+// Best Practices:
+// 1. Declare the event as a public member, e.g. FooEvent, in a class;
+// 2. Emit the event in the class by self.FooEvent.Emit(...)
+// 3. Subscribe the event outside the class by obj.FooEvent.Subscribe(callback)
 //    the callback will be executed instantly when FooEvent emits; if you need the callback
 //    to be asynchronous executed, use the go keyword manually inside the callback.
+
+// TODO:
+// 1. Do NOT use bool(true) to indicate stop listening. Use something type safe.
+// 2. Rename "Subscribe" to "Listen"
+// 3. Optimize this implementation. We can mark the handlers to be deleted as nil in the
+//    first pass, and shift non-nil handlers the front in the second pass, and then shrink
+//    the slice to fit.
 
 type Event struct {
 	handlers []reflect.Value
