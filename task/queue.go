@@ -7,7 +7,7 @@ type Queue struct {
 	tasks []Task
 }
 
-func (d *Queue) Push(t Task) {
+func (d *Queue) Add(t Task) {
 	d.tasks = append(d.tasks, t)
 }
 

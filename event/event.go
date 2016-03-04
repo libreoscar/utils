@@ -18,6 +18,8 @@ import (
 // 3. Optimize this implementation. We can mark the handlers to be deleted as nil in the
 //    first pass, and shift non-nil handlers the front in the second pass, and then shrink
 //    the slice to fit.
+// 4. Store the last event (can also be initially in the beginning). Allow new handler to
+//    be called with the last event when subscribing.
 
 type Event struct {
 	handlers []reflect.Value
