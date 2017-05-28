@@ -26,7 +26,7 @@ func TestRemove(t *testing.T) {
 	})
 	e.Subscribe(func() bool {
 		counter += 1
-		return true
+		return UNSUBSCRIBE
 	})
 
 	e.Emit()

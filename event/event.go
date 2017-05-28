@@ -11,20 +11,24 @@ import (
 // 3. Subscribe the event outside the class by obj.FooEvent.Subscribe(callback)
 //    the callback will be executed instantly when FooEvent emits; if you need the callback
 //    to be asynchronous executed, use the go keyword manually inside the callback.
+// 4. When the callback of a subscriber returns UNSUBSCRIBE, this subscriber will be removed from
+//    the subscriber list of this event, and thus will not receive more event.
 
 // TODO:
-// 1. Do NOT use bool(true) to indicate stop listening. Use something type safe.
-// 2. Rename "Subscribe" to "Listen"
-// 3. Optimize this implementation. We can mark the handlers to be deleted as nil in the
+// 1. Optimize this implementation. We can mark the handlers to be deleted as nil in the
 //    first pass, and shift non-nil handlers the front in the second pass, and then shrink
 //    the slice to fit.
-// 4. Store the last event (can also be initially in the beginning). Allow new handler to
+// 2. Store the last event (can also be initially in the beginning). Allow new handler to
 //    be called with the last event when subscribing.
 
 type Event struct {
 	handlers []reflect.Value
 	mu       sync.Mutex
 }
+
+const (
+	UNSUBSCRIBE = true
+)
 
 func NewEvent() *Event {
 	return &Event{
@@ -59,7 +63,7 @@ func (e *Event) Emit(params ...interface{}) {
 		for idx, h := range e.handlers {
 			rst := h.Call(callArgv)
 			// if rst is true, the handler will be removed
-			if len(rst) == 1 && rst[0].Kind() == reflect.Bool && rst[0].Bool() {
+			if len(rst) == 1 && rst[0].Interface() == interface{}(UNSUBSCRIBE) {
 				toRemove[idx] = true
 			}
 		}
